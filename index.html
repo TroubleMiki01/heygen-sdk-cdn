@@ -41,17 +41,24 @@
   <h1>🎥 HeyGen Streaming Avatar SDK</h1>
   
   <div class="usage">
-    <h2>📦 File Disponibile</h2>
-    <p>SDK JavaScript ES Module: <code>streaming-avatar.js</code></p>
+    <h2>📦 File Disponibili</h2>
+    <p><strong>SDK Standalone (Raccomandato):</strong> <code>streaming-avatar-standalone.js</code></p>
+    <p><strong>SDK ES Module:</strong> <code>streaming-avatar.js</code></p>
   </div>
   
   <h2>🚀 Come Usarlo</h2>
-  <p>Importa l'SDK direttamente nel tuo progetto:</p>
   
+  <h3>Metodo 1: SDK Standalone (Raccomandato)</h3>
+  <pre><code>&lt;script src="https://troublemiki01.github.io/heygen-sdk-cdn/streaming-avatar-standalone.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  // StreamingAvatar è disponibile globalmente
+  const avatar = new StreamingAvatar({ ... });
+&lt;/script&gt;</code></pre>
+  
+  <h3>Metodo 2: ES Module</h3>
   <pre><code>&lt;script type="module"&gt;
-  import StreamingAvatar from 'https://TUO_USERNAME.github.io/heygen-sdk-cdn/streaming-avatar.js';
+  import StreamingAvatar from 'https://troublemiki01.github.io/heygen-sdk-cdn/streaming-avatar.js';
   
-  // Il tuo codice qui
   const avatar = new StreamingAvatar({ ... });
 &lt;/script&gt;</code></pre>
   
@@ -60,9 +67,10 @@
   
   <h2>📝 Note</h2>
   <ul>
-    <li>Questo è un mirror del file compilato <code>index.esm.js</code> dell'SDK ufficiale</li>
-    <li>Versione: ES Module (compatibile con i browser moderni)</li>
+    <li><strong>streaming-avatar-standalone.js</strong>: Bundle completo con tutte le dipendenze incluse</li>
+    <li><strong>streaming-avatar.js</strong>: Versione ES Module originale (richiede dipendenze esterne)</li>
     <li>Richiede un API key valido di HeyGen</li>
+    <li>Compatibile con tutti i browser moderni</li>
   </ul>
   
   <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; color: #666;">
