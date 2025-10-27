@@ -1,4 +1,4 @@
-(function (exports) {
+this.StreamingAvatar = (function () {
     'use strict';
 
     /******************************************************************************
@@ -19393,7 +19393,7 @@
       });
     }
 
-    var ConnectionQuality;
+    var ConnectionQuality$2;
     (function (ConnectionQuality) {
       ConnectionQuality["Excellent"] = "excellent";
       ConnectionQuality["Good"] = "good";
@@ -19404,19 +19404,19 @@
        */
       ConnectionQuality["Lost"] = "lost";
       ConnectionQuality["Unknown"] = "unknown";
-    })(ConnectionQuality || (ConnectionQuality = {}));
+    })(ConnectionQuality$2 || (ConnectionQuality$2 = {}));
     function qualityFromProto(q) {
       switch (q) {
         case ConnectionQuality$1.EXCELLENT:
-          return ConnectionQuality.Excellent;
+          return ConnectionQuality$2.Excellent;
         case ConnectionQuality$1.GOOD:
-          return ConnectionQuality.Good;
+          return ConnectionQuality$2.Good;
         case ConnectionQuality$1.POOR:
-          return ConnectionQuality.Poor;
+          return ConnectionQuality$2.Poor;
         case ConnectionQuality$1.LOST:
-          return ConnectionQuality.Lost;
+          return ConnectionQuality$2.Lost;
         default:
-          return ConnectionQuality.Unknown;
+          return ConnectionQuality$2.Unknown;
       }
     }
     class Participant extends eventsExports.EventEmitter {
@@ -19447,7 +19447,7 @@
         this.audioLevel = 0;
         /** if participant is currently speaking */
         this.isSpeaking = false;
-        this._connectionQuality = ConnectionQuality.Unknown;
+        this._connectionQuality = ConnectionQuality$2.Unknown;
         this.log = livekitLogger;
         this.log = getLogger((_a = loggerOptions === null || loggerOptions === void 0 ? void 0 : loggerOptions.loggerName) !== null && _a !== void 0 ? _a : LoggerNames.Participant);
         this.loggerOptions = loggerOptions;
@@ -24610,64 +24610,56 @@
 
     var minimal = {};
 
-    var aspromise;
-    var hasRequiredAspromise;
+    var aspromise = asPromise;
 
-    function requireAspromise () {
-    	if (hasRequiredAspromise) return aspromise;
-    	hasRequiredAspromise = 1;
-    	aspromise = asPromise;
+    /**
+     * Callback as used by {@link util.asPromise}.
+     * @typedef asPromiseCallback
+     * @type {function}
+     * @param {Error|null} error Error, if any
+     * @param {...*} params Additional arguments
+     * @returns {undefined}
+     */
 
-    	/**
-    	 * Callback as used by {@link util.asPromise}.
-    	 * @typedef asPromiseCallback
-    	 * @type {function}
-    	 * @param {Error|null} error Error, if any
-    	 * @param {...*} params Additional arguments
-    	 * @returns {undefined}
-    	 */
-
-    	/**
-    	 * Returns a promise from a node-style callback function.
-    	 * @memberof util
-    	 * @param {asPromiseCallback} fn Function to call
-    	 * @param {*} ctx Function context
-    	 * @param {...*} params Function arguments
-    	 * @returns {Promise<*>} Promisified function
-    	 */
-    	function asPromise(fn, ctx/*, varargs */) {
-    	    var params  = new Array(arguments.length - 1),
-    	        offset  = 0,
-    	        index   = 2,
-    	        pending = true;
-    	    while (index < arguments.length)
-    	        params[offset++] = arguments[index++];
-    	    return new Promise(function executor(resolve, reject) {
-    	        params[offset] = function callback(err/*, varargs */) {
-    	            if (pending) {
-    	                pending = false;
-    	                if (err)
-    	                    reject(err);
-    	                else {
-    	                    var params = new Array(arguments.length - 1),
-    	                        offset = 0;
-    	                    while (offset < params.length)
-    	                        params[offset++] = arguments[offset];
-    	                    resolve.apply(null, params);
-    	                }
-    	            }
-    	        };
-    	        try {
-    	            fn.apply(ctx || null, params);
-    	        } catch (err) {
-    	            if (pending) {
-    	                pending = false;
-    	                reject(err);
-    	            }
-    	        }
-    	    });
-    	}
-    	return aspromise;
+    /**
+     * Returns a promise from a node-style callback function.
+     * @memberof util
+     * @param {asPromiseCallback} fn Function to call
+     * @param {*} ctx Function context
+     * @param {...*} params Function arguments
+     * @returns {Promise<*>} Promisified function
+     */
+    function asPromise(fn, ctx/*, varargs */) {
+        var params  = new Array(arguments.length - 1),
+            offset  = 0,
+            index   = 2,
+            pending = true;
+        while (index < arguments.length)
+            params[offset++] = arguments[index++];
+        return new Promise(function executor(resolve, reject) {
+            params[offset] = function callback(err/*, varargs */) {
+                if (pending) {
+                    pending = false;
+                    if (err)
+                        reject(err);
+                    else {
+                        var params = new Array(arguments.length - 1),
+                            offset = 0;
+                        while (offset < params.length)
+                            params[offset++] = arguments[offset];
+                        resolve.apply(null, params);
+                    }
+                }
+            };
+            try {
+                fn.apply(ctx || null, params);
+            } catch (err) {
+                if (pending) {
+                    pending = false;
+                    reject(err);
+                }
+            }
+        });
     }
 
     var base64$1 = {};
@@ -24820,89 +24812,81 @@
     	return base64$1;
     }
 
-    var eventemitter;
-    var hasRequiredEventemitter;
+    var eventemitter = EventEmitter;
 
-    function requireEventemitter () {
-    	if (hasRequiredEventemitter) return eventemitter;
-    	hasRequiredEventemitter = 1;
-    	eventemitter = EventEmitter;
+    /**
+     * Constructs a new event emitter instance.
+     * @classdesc A minimal event emitter.
+     * @memberof util
+     * @constructor
+     */
+    function EventEmitter() {
 
-    	/**
-    	 * Constructs a new event emitter instance.
-    	 * @classdesc A minimal event emitter.
-    	 * @memberof util
-    	 * @constructor
-    	 */
-    	function EventEmitter() {
-
-    	    /**
-    	     * Registered listeners.
-    	     * @type {Object.<string,*>}
-    	     * @private
-    	     */
-    	    this._listeners = {};
-    	}
-
-    	/**
-    	 * Registers an event listener.
-    	 * @param {string} evt Event name
-    	 * @param {function} fn Listener
-    	 * @param {*} [ctx] Listener context
-    	 * @returns {util.EventEmitter} `this`
-    	 */
-    	EventEmitter.prototype.on = function on(evt, fn, ctx) {
-    	    (this._listeners[evt] || (this._listeners[evt] = [])).push({
-    	        fn  : fn,
-    	        ctx : ctx || this
-    	    });
-    	    return this;
-    	};
-
-    	/**
-    	 * Removes an event listener or any matching listeners if arguments are omitted.
-    	 * @param {string} [evt] Event name. Removes all listeners if omitted.
-    	 * @param {function} [fn] Listener to remove. Removes all listeners of `evt` if omitted.
-    	 * @returns {util.EventEmitter} `this`
-    	 */
-    	EventEmitter.prototype.off = function off(evt, fn) {
-    	    if (evt === undefined)
-    	        this._listeners = {};
-    	    else {
-    	        if (fn === undefined)
-    	            this._listeners[evt] = [];
-    	        else {
-    	            var listeners = this._listeners[evt];
-    	            for (var i = 0; i < listeners.length;)
-    	                if (listeners[i].fn === fn)
-    	                    listeners.splice(i, 1);
-    	                else
-    	                    ++i;
-    	        }
-    	    }
-    	    return this;
-    	};
-
-    	/**
-    	 * Emits an event by calling its listeners with the specified arguments.
-    	 * @param {string} evt Event name
-    	 * @param {...*} args Arguments
-    	 * @returns {util.EventEmitter} `this`
-    	 */
-    	EventEmitter.prototype.emit = function emit(evt) {
-    	    var listeners = this._listeners[evt];
-    	    if (listeners) {
-    	        var args = [],
-    	            i = 1;
-    	        for (; i < arguments.length;)
-    	            args.push(arguments[i++]);
-    	        for (i = 0; i < listeners.length;)
-    	            listeners[i].fn.apply(listeners[i++].ctx, args);
-    	    }
-    	    return this;
-    	};
-    	return eventemitter;
+        /**
+         * Registered listeners.
+         * @type {Object.<string,*>}
+         * @private
+         */
+        this._listeners = {};
     }
+
+    /**
+     * Registers an event listener.
+     * @param {string} evt Event name
+     * @param {function} fn Listener
+     * @param {*} [ctx] Listener context
+     * @returns {util.EventEmitter} `this`
+     */
+    EventEmitter.prototype.on = function on(evt, fn, ctx) {
+        (this._listeners[evt] || (this._listeners[evt] = [])).push({
+            fn  : fn,
+            ctx : ctx || this
+        });
+        return this;
+    };
+
+    /**
+     * Removes an event listener or any matching listeners if arguments are omitted.
+     * @param {string} [evt] Event name. Removes all listeners if omitted.
+     * @param {function} [fn] Listener to remove. Removes all listeners of `evt` if omitted.
+     * @returns {util.EventEmitter} `this`
+     */
+    EventEmitter.prototype.off = function off(evt, fn) {
+        if (evt === undefined)
+            this._listeners = {};
+        else {
+            if (fn === undefined)
+                this._listeners[evt] = [];
+            else {
+                var listeners = this._listeners[evt];
+                for (var i = 0; i < listeners.length;)
+                    if (listeners[i].fn === fn)
+                        listeners.splice(i, 1);
+                    else
+                        ++i;
+            }
+        }
+        return this;
+    };
+
+    /**
+     * Emits an event by calling its listeners with the specified arguments.
+     * @param {string} evt Event name
+     * @param {...*} args Arguments
+     * @returns {util.EventEmitter} `this`
+     */
+    EventEmitter.prototype.emit = function emit(evt) {
+        var listeners = this._listeners[evt];
+        if (listeners) {
+            var args = [],
+                i = 1;
+            for (; i < arguments.length;)
+                args.push(arguments[i++]);
+            for (i = 0; i < listeners.length;)
+                listeners[i].fn.apply(listeners[i++].ctx, args);
+        }
+        return this;
+    };
 
     var float;
     var hasRequiredFloat;
@@ -25274,119 +25258,112 @@
 
     var utf8$2 = {};
 
-    var hasRequiredUtf8;
+    (function (exports) {
 
-    function requireUtf8 () {
-    	if (hasRequiredUtf8) return utf8$2;
-    	hasRequiredUtf8 = 1;
-    	(function (exports) {
+    	/**
+    	 * A minimal UTF8 implementation for number arrays.
+    	 * @memberof util
+    	 * @namespace
+    	 */
+    	var utf8 = exports;
 
-    		/**
-    		 * A minimal UTF8 implementation for number arrays.
-    		 * @memberof util
-    		 * @namespace
-    		 */
-    		var utf8 = exports;
+    	/**
+    	 * Calculates the UTF8 byte length of a string.
+    	 * @param {string} string String
+    	 * @returns {number} Byte length
+    	 */
+    	utf8.length = function utf8_length(string) {
+    	    var len = 0,
+    	        c = 0;
+    	    for (var i = 0; i < string.length; ++i) {
+    	        c = string.charCodeAt(i);
+    	        if (c < 128)
+    	            len += 1;
+    	        else if (c < 2048)
+    	            len += 2;
+    	        else if ((c & 0xFC00) === 0xD800 && (string.charCodeAt(i + 1) & 0xFC00) === 0xDC00) {
+    	            ++i;
+    	            len += 4;
+    	        } else
+    	            len += 3;
+    	    }
+    	    return len;
+    	};
 
-    		/**
-    		 * Calculates the UTF8 byte length of a string.
-    		 * @param {string} string String
-    		 * @returns {number} Byte length
-    		 */
-    		utf8.length = function utf8_length(string) {
-    		    var len = 0,
-    		        c = 0;
-    		    for (var i = 0; i < string.length; ++i) {
-    		        c = string.charCodeAt(i);
-    		        if (c < 128)
-    		            len += 1;
-    		        else if (c < 2048)
-    		            len += 2;
-    		        else if ((c & 0xFC00) === 0xD800 && (string.charCodeAt(i + 1) & 0xFC00) === 0xDC00) {
-    		            ++i;
-    		            len += 4;
-    		        } else
-    		            len += 3;
-    		    }
-    		    return len;
-    		};
+    	/**
+    	 * Reads UTF8 bytes as a string.
+    	 * @param {Uint8Array} buffer Source buffer
+    	 * @param {number} start Source start
+    	 * @param {number} end Source end
+    	 * @returns {string} String read
+    	 */
+    	utf8.read = function utf8_read(buffer, start, end) {
+    	    var len = end - start;
+    	    if (len < 1)
+    	        return "";
+    	    var parts = null,
+    	        chunk = [],
+    	        i = 0, // char offset
+    	        t;     // temporary
+    	    while (start < end) {
+    	        t = buffer[start++];
+    	        if (t < 128)
+    	            chunk[i++] = t;
+    	        else if (t > 191 && t < 224)
+    	            chunk[i++] = (t & 31) << 6 | buffer[start++] & 63;
+    	        else if (t > 239 && t < 365) {
+    	            t = ((t & 7) << 18 | (buffer[start++] & 63) << 12 | (buffer[start++] & 63) << 6 | buffer[start++] & 63) - 0x10000;
+    	            chunk[i++] = 0xD800 + (t >> 10);
+    	            chunk[i++] = 0xDC00 + (t & 1023);
+    	        } else
+    	            chunk[i++] = (t & 15) << 12 | (buffer[start++] & 63) << 6 | buffer[start++] & 63;
+    	        if (i > 8191) {
+    	            (parts || (parts = [])).push(String.fromCharCode.apply(String, chunk));
+    	            i = 0;
+    	        }
+    	    }
+    	    if (parts) {
+    	        if (i)
+    	            parts.push(String.fromCharCode.apply(String, chunk.slice(0, i)));
+    	        return parts.join("");
+    	    }
+    	    return String.fromCharCode.apply(String, chunk.slice(0, i));
+    	};
 
-    		/**
-    		 * Reads UTF8 bytes as a string.
-    		 * @param {Uint8Array} buffer Source buffer
-    		 * @param {number} start Source start
-    		 * @param {number} end Source end
-    		 * @returns {string} String read
-    		 */
-    		utf8.read = function utf8_read(buffer, start, end) {
-    		    var len = end - start;
-    		    if (len < 1)
-    		        return "";
-    		    var parts = null,
-    		        chunk = [],
-    		        i = 0, // char offset
-    		        t;     // temporary
-    		    while (start < end) {
-    		        t = buffer[start++];
-    		        if (t < 128)
-    		            chunk[i++] = t;
-    		        else if (t > 191 && t < 224)
-    		            chunk[i++] = (t & 31) << 6 | buffer[start++] & 63;
-    		        else if (t > 239 && t < 365) {
-    		            t = ((t & 7) << 18 | (buffer[start++] & 63) << 12 | (buffer[start++] & 63) << 6 | buffer[start++] & 63) - 0x10000;
-    		            chunk[i++] = 0xD800 + (t >> 10);
-    		            chunk[i++] = 0xDC00 + (t & 1023);
-    		        } else
-    		            chunk[i++] = (t & 15) << 12 | (buffer[start++] & 63) << 6 | buffer[start++] & 63;
-    		        if (i > 8191) {
-    		            (parts || (parts = [])).push(String.fromCharCode.apply(String, chunk));
-    		            i = 0;
-    		        }
-    		    }
-    		    if (parts) {
-    		        if (i)
-    		            parts.push(String.fromCharCode.apply(String, chunk.slice(0, i)));
-    		        return parts.join("");
-    		    }
-    		    return String.fromCharCode.apply(String, chunk.slice(0, i));
-    		};
-
-    		/**
-    		 * Writes a string as UTF8 bytes.
-    		 * @param {string} string Source string
-    		 * @param {Uint8Array} buffer Destination buffer
-    		 * @param {number} offset Destination offset
-    		 * @returns {number} Bytes written
-    		 */
-    		utf8.write = function utf8_write(string, buffer, offset) {
-    		    var start = offset,
-    		        c1, // character 1
-    		        c2; // character 2
-    		    for (var i = 0; i < string.length; ++i) {
-    		        c1 = string.charCodeAt(i);
-    		        if (c1 < 128) {
-    		            buffer[offset++] = c1;
-    		        } else if (c1 < 2048) {
-    		            buffer[offset++] = c1 >> 6       | 192;
-    		            buffer[offset++] = c1       & 63 | 128;
-    		        } else if ((c1 & 0xFC00) === 0xD800 && ((c2 = string.charCodeAt(i + 1)) & 0xFC00) === 0xDC00) {
-    		            c1 = 0x10000 + ((c1 & 0x03FF) << 10) + (c2 & 0x03FF);
-    		            ++i;
-    		            buffer[offset++] = c1 >> 18      | 240;
-    		            buffer[offset++] = c1 >> 12 & 63 | 128;
-    		            buffer[offset++] = c1 >> 6  & 63 | 128;
-    		            buffer[offset++] = c1       & 63 | 128;
-    		        } else {
-    		            buffer[offset++] = c1 >> 12      | 224;
-    		            buffer[offset++] = c1 >> 6  & 63 | 128;
-    		            buffer[offset++] = c1       & 63 | 128;
-    		        }
-    		    }
-    		    return offset - start;
-    		}; 
-    	} (utf8$2));
-    	return utf8$2;
-    }
+    	/**
+    	 * Writes a string as UTF8 bytes.
+    	 * @param {string} string Source string
+    	 * @param {Uint8Array} buffer Destination buffer
+    	 * @param {number} offset Destination offset
+    	 * @returns {number} Bytes written
+    	 */
+    	utf8.write = function utf8_write(string, buffer, offset) {
+    	    var start = offset,
+    	        c1, // character 1
+    	        c2; // character 2
+    	    for (var i = 0; i < string.length; ++i) {
+    	        c1 = string.charCodeAt(i);
+    	        if (c1 < 128) {
+    	            buffer[offset++] = c1;
+    	        } else if (c1 < 2048) {
+    	            buffer[offset++] = c1 >> 6       | 192;
+    	            buffer[offset++] = c1       & 63 | 128;
+    	        } else if ((c1 & 0xFC00) === 0xD800 && ((c2 = string.charCodeAt(i + 1)) & 0xFC00) === 0xDC00) {
+    	            c1 = 0x10000 + ((c1 & 0x03FF) << 10) + (c2 & 0x03FF);
+    	            ++i;
+    	            buffer[offset++] = c1 >> 18      | 240;
+    	            buffer[offset++] = c1 >> 12 & 63 | 128;
+    	            buffer[offset++] = c1 >> 6  & 63 | 128;
+    	            buffer[offset++] = c1       & 63 | 128;
+    	        } else {
+    	            buffer[offset++] = c1 >> 12      | 224;
+    	            buffer[offset++] = c1 >> 6  & 63 | 128;
+    	            buffer[offset++] = c1       & 63 | 128;
+    	        }
+    	    }
+    	    return offset - start;
+    	}; 
+    } (utf8$2));
 
     var pool_1;
     var hasRequiredPool;
@@ -25661,13 +25638,13 @@
     		var util = exports;
 
     		// used to return a Promise where callback is omitted
-    		util.asPromise = requireAspromise();
+    		util.asPromise = aspromise;
 
     		// converts to / from base64 encoded strings
     		util.base64 = requireBase64();
 
     		// base class of rpc.Service
-    		util.EventEmitter = requireEventemitter();
+    		util.EventEmitter = eventemitter;
 
     		// float handling accross browsers
     		util.float = requireFloat();
@@ -25676,7 +25653,7 @@
     		util.inquire = requireInquire();
 
     		// converts to / from utf8 encoded strings
-    		util.utf8 = requireUtf8();
+    		util.utf8 = utf8$2;
 
     		// provides a node-like buffer pool in the browser
     		util.pool = requirePool();
@@ -27457,7 +27434,7 @@
     	hasRequiredFetch = 1;
     	fetch_1 = fetch;
 
-    	var asPromise = requireAspromise(),
+    	var asPromise = aspromise,
     	    inquire   = requireInquire();
 
     	var fs = inquire("fs");
@@ -34308,15 +34285,15 @@
     	nested: nested
     };
 
-    exports.ConnectionQuality = void 0;
+    var ConnectionQuality;
     (function (ConnectionQuality) {
         ConnectionQuality["UNKNOWN"] = "UNKNOWN";
         ConnectionQuality["GOOD"] = "GOOD";
         ConnectionQuality["BAD"] = "BAD";
-    })(exports.ConnectionQuality || (exports.ConnectionQuality = {}));
+    })(ConnectionQuality || (ConnectionQuality = {}));
     var AbstractConnectionQualityIndicator = /** @class */ (function () {
         function AbstractConnectionQualityIndicator(onConnectionQualityChanged) {
-            this._connectionQuality = exports.ConnectionQuality.UNKNOWN;
+            this._connectionQuality = ConnectionQuality.UNKNOWN;
             this.onConnectionQualityChanged = onConnectionQualityChanged;
         }
         Object.defineProperty(AbstractConnectionQualityIndicator.prototype, "connectionQuality", {
@@ -34340,9 +34317,9 @@
         AbstractConnectionQualityIndicator.prototype.stop = function (muted) {
             if (muted === void 0) { muted = false; }
             this._stop();
-            this._connectionQuality = exports.ConnectionQuality.UNKNOWN;
+            this._connectionQuality = ConnectionQuality.UNKNOWN;
             if (!muted) {
-                this.onConnectionQualityChanged(exports.ConnectionQuality.UNKNOWN);
+                this.onConnectionQualityChanged(ConnectionQuality.UNKNOWN);
             }
         };
         return AbstractConnectionQualityIndicator;
@@ -34370,13 +34347,13 @@
                     var tracker = _a.tracker;
                     return tracker.connectionQuality;
                 });
-                if (connectionQualities.some(function (quality) { return quality === exports.ConnectionQuality.BAD; })) {
-                    return exports.ConnectionQuality.BAD;
+                if (connectionQualities.some(function (quality) { return quality === ConnectionQuality.BAD; })) {
+                    return ConnectionQuality.BAD;
                 }
-                if (connectionQualities.every(function (quality) { return quality === exports.ConnectionQuality.UNKNOWN; })) {
-                    return exports.ConnectionQuality.UNKNOWN;
+                if (connectionQualities.every(function (quality) { return quality === ConnectionQuality.UNKNOWN; })) {
+                    return ConnectionQuality.UNKNOWN;
                 }
-                return exports.ConnectionQuality.GOOD;
+                return ConnectionQuality.GOOD;
             };
             CombinedQualityIndicator.prototype._start = function (params) {
                 this.childTrackers.forEach(function (_a) {
@@ -34400,7 +34377,7 @@
         function LiveKitConnectionQualityIndicator() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
             _this.room = null;
-            _this.liveKitConnectionQuality = ConnectionQuality.Unknown;
+            _this.liveKitConnectionQuality = ConnectionQuality$2.Unknown;
             _this.liveKitConnectionState = null;
             _this.handleConnectionQualityChanged = function (quality) {
                 _this.liveKitConnectionQuality = quality;
@@ -34424,8 +34401,8 @@
             }
         };
         LiveKitConnectionQualityIndicator.prototype.calculateConnectionQuality = function () {
-            if ([ConnectionQuality.Lost, ConnectionQuality.Poor].includes(this.liveKitConnectionQuality)) {
-                return exports.ConnectionQuality.BAD;
+            if ([ConnectionQuality$2.Lost, ConnectionQuality$2.Poor].includes(this.liveKitConnectionQuality)) {
+                return ConnectionQuality.BAD;
             }
             if (this.liveKitConnectionState &&
                 [
@@ -34433,9 +34410,9 @@
                     ConnectionState.Reconnecting,
                     ConnectionState.SignalReconnecting,
                 ].includes(this.liveKitConnectionState)) {
-                return exports.ConnectionQuality.BAD;
+                return ConnectionQuality.BAD;
             }
-            return exports.ConnectionQuality.GOOD;
+            return ConnectionQuality.GOOD;
         };
         return LiveKitConnectionQualityIndicator;
     }(AbstractConnectionQualityIndicator));
@@ -34471,13 +34448,13 @@
         };
         WebRTCConnectionQualityIndicator.prototype.calculateConnectionQuality = function () {
             if (!this.mosScores || (this.mosScores.inbound && this.mosScores.outbound)) {
-                return exports.ConnectionQuality.UNKNOWN;
+                return ConnectionQuality.UNKNOWN;
             }
             if ((this.mosScores.inbound && this.mosScores.inbound < 3) ||
                 (this.mosScores.outbound && this.mosScores.outbound < 3)) {
-                return exports.ConnectionQuality.BAD;
+                return ConnectionQuality.BAD;
             }
-            return exports.ConnectionQuality.GOOD;
+            return ConnectionQuality.GOOD;
         };
         return WebRTCConnectionQualityIndicator;
     }(AbstractConnectionQualityIndicator));
@@ -34782,11 +34759,11 @@
         return WebSocketVoiceChat;
     }(AbstractVoiceChatImplementation));
 
-    exports.VoiceChatTransport = void 0;
+    var VoiceChatTransport;
     (function (VoiceChatTransport) {
         VoiceChatTransport["LIVEKIT"] = "livekit";
         VoiceChatTransport["WEBSOCKET"] = "websocket";
-    })(exports.VoiceChatTransport || (exports.VoiceChatTransport = {}));
+    })(VoiceChatTransport || (VoiceChatTransport = {}));
     var VoiceChatFactory = /** @class */ (function (_super) {
         __extends(VoiceChatFactory, _super);
         function VoiceChatFactory(_a) {
@@ -34856,42 +34833,42 @@
         return VoiceChatFactory;
     }(AbstractVoiceChat));
 
-    exports.AvatarQuality = void 0;
+    var AvatarQuality;
     (function (AvatarQuality) {
         AvatarQuality["Low"] = "low";
         AvatarQuality["Medium"] = "medium";
         AvatarQuality["High"] = "high";
-    })(exports.AvatarQuality || (exports.AvatarQuality = {}));
-    exports.VoiceEmotion = void 0;
+    })(AvatarQuality || (AvatarQuality = {}));
+    var VoiceEmotion;
     (function (VoiceEmotion) {
         VoiceEmotion["EXCITED"] = "excited";
         VoiceEmotion["SERIOUS"] = "serious";
         VoiceEmotion["FRIENDLY"] = "friendly";
         VoiceEmotion["SOOTHING"] = "soothing";
         VoiceEmotion["BROADCASTER"] = "broadcaster";
-    })(exports.VoiceEmotion || (exports.VoiceEmotion = {}));
-    exports.ElevenLabsModel = void 0;
+    })(VoiceEmotion || (VoiceEmotion = {}));
+    var ElevenLabsModel;
     (function (ElevenLabsModel) {
         ElevenLabsModel["eleven_flash_v2_5"] = "eleven_flash_v2_5";
         ElevenLabsModel["eleven_multilingual_v2"] = "eleven_multilingual_v2";
-    })(exports.ElevenLabsModel || (exports.ElevenLabsModel = {}));
-    exports.STTProvider = void 0;
+    })(ElevenLabsModel || (ElevenLabsModel = {}));
+    var STTProvider;
     (function (STTProvider) {
         STTProvider["DEEPGRAM"] = "deepgram";
         STTProvider["GLADIA"] = "gladia";
-    })(exports.STTProvider || (exports.STTProvider = {}));
-    exports.TaskType = void 0;
+    })(STTProvider || (STTProvider = {}));
+    var TaskType;
     (function (TaskType) {
         TaskType["TALK"] = "talk";
         TaskType["REPEAT"] = "repeat";
-    })(exports.TaskType || (exports.TaskType = {}));
-    exports.TaskMode = void 0;
+    })(TaskType || (TaskType = {}));
+    var TaskMode;
     (function (TaskMode) {
         TaskMode["SYNC"] = "sync";
         TaskMode["ASYNC"] = "async";
-    })(exports.TaskMode || (exports.TaskMode = {}));
+    })(TaskMode || (TaskMode = {}));
     // event types --------------------------------
-    exports.StreamingEvents = void 0;
+    var StreamingEvents;
     (function (StreamingEvents) {
         StreamingEvents["AVATAR_START_TALKING"] = "avatar_start_talking";
         StreamingEvents["AVATAR_STOP_TALKING"] = "avatar_stop_talking";
@@ -34905,7 +34882,7 @@
         StreamingEvents["STREAM_READY"] = "stream_ready";
         StreamingEvents["STREAM_DISCONNECTED"] = "stream_disconnected";
         StreamingEvents["CONNECTION_QUALITY_CHANGED"] = "connection_quality_changed";
-    })(exports.StreamingEvents || (exports.StreamingEvents = {}));
+    })(StreamingEvents || (StreamingEvents = {}));
     var APIError = /** @class */ (function (_super) {
         __extends(APIError, _super);
         function APIError(message, status, responseText) {
@@ -34939,7 +34916,7 @@
             this.token = token;
             this.basePath = basePath;
             this.connectionQualityIndicator = new ConnectionQualityIndicatorClass(function (quality) {
-                return _this.emit(exports.StreamingEvents.CONNECTION_QUALITY_CHANGED, quality);
+                return _this.emit(StreamingEvents.CONNECTION_QUALITY_CHANGED, quality);
             });
         }
         Object.defineProperty(StreamingAvatar.prototype, "connectionQuality", {
@@ -34988,7 +34965,7 @@
                         case 0:
                             this.sessionId = sessionInfo.session_id;
                             this.isLiveKitTransport =
-                                requestData.voiceChatTransport === exports.VoiceChatTransport.LIVEKIT;
+                                requestData.voiceChatTransport === VoiceChatTransport.LIVEKIT;
                             room = new Room({
                                 adaptiveStream: true,
                                 dynacast: true,
@@ -35021,7 +34998,7 @@
                                     var hasAudioTrack = mediaStream.getAudioTracks().length > 0;
                                     if (hasVideoTrack && hasAudioTrack && !_this.mediaStream) {
                                         _this.mediaStream = mediaStream;
-                                        _this.emit(exports.StreamingEvents.STREAM_READY, _this.mediaStream);
+                                        _this.emit(StreamingEvents.STREAM_READY, _this.mediaStream);
                                     }
                                 }
                             });
@@ -35032,7 +35009,7 @@
                                 }
                             });
                             room.on(RoomEvent.Disconnected, function (reason) {
-                                _this.emit(exports.StreamingEvents.STREAM_DISCONNECTED, reason);
+                                _this.emit(StreamingEvents.STREAM_DISCONNECTED, reason);
                             });
                             _b.label = 1;
                         case 1:
@@ -35053,7 +35030,7 @@
                             return [4 /*yield*/, this.connectWebSocket({ useSilencePrompt: !!requestData.useSilencePrompt })];
                         case 7:
                             _b.sent();
-                            this.initVoiceChat(requestData.voiceChatTransport || exports.VoiceChatTransport.WEBSOCKET);
+                            this.initVoiceChat(requestData.voiceChatTransport || VoiceChatTransport.WEBSOCKET);
                             this.connectionQualityIndicator.start(room);
                             return [2 /*return*/, sessionInfo];
                     }
@@ -35108,7 +35085,7 @@
                             source: 'sdk',
                             disable_idle_timeout: requestData.disableIdleTimeout,
                             stt_settings: requestData.sttSettings,
-                            ia_is_livekit_transport: requestData.voiceChatTransport === exports.VoiceChatTransport.LIVEKIT,
+                            ia_is_livekit_transport: requestData.voiceChatTransport === VoiceChatTransport.LIVEKIT,
                             silence_response: requestData.useSilencePrompt,
                             activity_idle_timeout: requestData.activityIdleTimeout,
                         })];
@@ -35128,10 +35105,10 @@
             return __awaiter$1(this, void 0, void 0, function () {
                 var taskType, taskMode;
                 return __generator(this, function (_a) {
-                    taskType = requestData.taskType || requestData.task_type || exports.TaskType.TALK;
-                    taskMode = requestData.taskMode || exports.TaskMode.ASYNC;
+                    taskType = requestData.taskType || requestData.task_type || TaskType.TALK;
+                    taskMode = requestData.taskMode || TaskMode.ASYNC;
                     // livekit/websocket text transport supports only async talk task
-                    if (taskType === exports.TaskType.TALK && taskMode === exports.TaskMode.ASYNC) {
+                    if (taskType === TaskType.TALK && taskMode === TaskMode.ASYNC) {
                         if (this.isLiveKitTransport && this.room) {
                             this.sendLivekitMessage(requestData.text);
                             return [2 /*return*/];
@@ -35282,7 +35259,7 @@
             });
         };
         StreamingAvatar.prototype.initVoiceChat = function (transport) {
-            if (transport === exports.VoiceChatTransport.WEBSOCKET) {
+            if (transport === VoiceChatTransport.WEBSOCKET) {
                 this.loadAudioRawFrame();
                 if (!this.audioRawFrame || !this.webSocket) {
                     return;
@@ -35393,8 +35370,8 @@
         return StreamingAvatar;
     }());
 
-    exports.default = StreamingAvatar;
+    // Wrapper per esportare solo StreamingAvatar come default
 
-    Object.defineProperty(exports, '__esModule', { value: true });
+    return StreamingAvatar;
 
-})(this.StreamingAvatar = this.StreamingAvatar || {});
+})();
