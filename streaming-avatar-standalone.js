@@ -1,4 +1,4 @@
-var StreamingAvatar = (function (exports) {
+(function (exports) {
     'use strict';
 
     /******************************************************************************
@@ -35397,6 +35397,4 @@ var StreamingAvatar = (function (exports) {
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-    return exports;
-
-})({});
+})(this.StreamingAvatar = this.StreamingAvatar || {});
